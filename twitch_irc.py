@@ -2,6 +2,7 @@ from twisted.internet import protocol, reactor
 import logging
 import time
 import bot
+import argparse
 
 
 class BotFactory(protocol.ClientFactory):
@@ -22,8 +23,17 @@ class BotFactory(protocol.ClientFactory):
         self.wait_time = min(512, self.wait_time * 2)
         connector.connect()
 
+    def buildProtocol(self, addr):
+        p = bot.TwitchBot(args.channel)
+        p.factory = self
+        return p
+
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("channel")
+    args = parser.parse_args()
+
     # Make logging format prettier
     logging.basicConfig(format="[%(asctime)s] %(message)s",
                         datefmt="%H:%M:%S",

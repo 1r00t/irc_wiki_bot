@@ -9,10 +9,10 @@ m = r"(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,
 
 
 class TwitchBot(irc.IRCClient, object):
-
-    channel = "#huschee"
-    nickname = "8244"
-    password = "oauth:2yrcji35prj3toui6wdb94j09o98ys"
+    def __init__(self, channel):
+        self.channel = "#" + channel
+        self.nickname = "8244"
+        self.password = "oauth:2yrcji35prj3toui6wdb94j09o98ys"
 
     current_time = time()
 
