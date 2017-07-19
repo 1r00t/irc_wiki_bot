@@ -2,11 +2,15 @@ from twisted.words.protocols import irc
 import logging
 from time import time
 import wikipedia
+import re
+
+
+m = r"(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})"
 
 
 class TwitchBot(irc.IRCClient, object):
 
-    channel = "#lostaiming"
+    channel = "#huschee"
     nickname = "8244"
     password = "oauth:2yrcji35prj3toui6wdb94j09o98ys"
 
@@ -37,9 +41,11 @@ class TwitchBot(irc.IRCClient, object):
             if whatis[1]:
                 topic = whatis[1].strip()
                 try:
-                    self.write("@" + name + ": " + wikipedia.summary(topic, sentences=1))
+                    result = wikipedia.summary(topic, sentences=1)
+                    result = re.sub(m, "<link>", result)
+                    self.write("@" + name + ": " + result)
                 except wikipedia.exceptions.DisambiguationError as e1:
-                    self.write("@" + name + ", what exactly do you mean: '" + "', '".join(e.options) + "'")
+                    self.write("@" + name + ", what exactly do you mean: '" + "', '".join(e1.options[:4]) + "'")
                 except wikipedia.exceptions.PageError as e2:
                     self.write("@" + name + ", sorry I don't know what '" + topic + "' is.")
 
